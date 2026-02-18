@@ -1,0 +1,649 @@
+{
+  "name": "Skill Journey",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "86fa1196-5963-4757-85d0-b455283eb3e4",
+              "leftValue": "={{ $json.body['Why you want to learn it ?'] }}",
+              "rightValue": "Work",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        224
+      ],
+      "id": "94fea013-1492-404f-b1ef-ea2215fb5684",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Act as a career path helper\nGenerate a  {{ $('Google Sheets Trigger').item.json['What period of time do you want to learn these skills?'] }} to help the person learn {{ $('Google Sheets Trigger').item.json['What are the skills you want to learn?'] }} to be good enough to land a job using this skill.\nAnd provide name of best free online course or youtube video title (don't provide links) for every step or phase in the plan\ngenerate output in colorful theme HTML format (replace first \"html with <html> tag)"
+            }
+          ]
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        96
+      ],
+      "id": "313dbcab-9c30-4aca-8721-938df7a9b193",
+      "name": "For Work",
+      "retryOnFail": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "4beb1lfDTW7X9CZv",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-3.5-turbo",
+          "mode": "list",
+          "cachedResultName": "GPT-3.5-TURBO"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Act as a career path helper\nGenerate a  {{ $json.body['What period of time do you want to learn these skills?'] }} to help the person learn {{ $json.body['What are the skills you want to learn?'] }} to learn it as a hobby (not necessarily for a job).\nAnd provide name of best free online course or youtube video title (don't provide links) for every step or phase in the plan\ngenerate output in colorful theme HTML format (replace first \"html with <html> tag)"
+            }
+          ]
+        },
+        "builtInTools": {
+          "webSearch": {
+            "searchContextSize": "medium"
+          }
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        688,
+        352
+      ],
+      "id": "6c591b4a-cdba-420c-bfa9-ea377c922a75",
+      "name": "As a Hobby",
+      "credentials": {
+        "openAiApi": {
+          "id": "4beb1lfDTW7X9CZv",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1384ac70-56b0-4897-b1b4-e78999ec2b4d",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        224
+      ],
+      "id": "0afda644-a9e7-4998-ade2-947989397be5",
+      "name": "Webhook",
+      "webhookId": "1384ac70-56b0-4897-b1b4-e78999ec2b4d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2a0ffa61-f6a4-488a-9b27-5e037380f6df",
+              "name": "Hobby Response",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "48728425-8290-42f7-b98e-f856b6ec3d80",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        96
+      ],
+      "id": "1cab9804-0a11-4d41-bc12-af19ecae4153",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE",
+          "mode": "list",
+          "cachedResultName": "Skill Journey (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1066219918,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit#gid=1066219918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Processed": "done",
+            "Your Name": "={{ $('Webhook').item.json.body['Your Name'] }}"
+          },
+          "matchingColumns": [
+            "Your Name"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Name",
+              "displayName": "Your Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "How old Are You ?",
+              "displayName": "How old Are You ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Gmail",
+              "displayName": "Your Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What are the skills you want to learn?",
+              "displayName": "What are the skills you want to learn?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What period of time do you want to learn these skills?",
+              "displayName": "What period of time do you want to learn these skills?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Why you want to learn it ?",
+              "displayName": "Why you want to learn it ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Processed",
+              "displayName": "Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1872,
+        96
+      ],
+      "id": "ff1bc6e5-e66a-43a0-8966-7c56ac485db9",
+      "name": "Update row in sheet (Success)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VdQvCOO7iZDo71f9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE",
+          "mode": "list",
+          "cachedResultName": "Skill Journey (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1066219918,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit#gid=1066219918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Processed": "Error",
+            "Your Name": "={{ $('Webhook').item.json.body['Your Name'] }}"
+          },
+          "matchingColumns": [
+            "Your Name"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Name",
+              "displayName": "Your Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "How old Are You ?",
+              "displayName": "How old Are You ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Gmail",
+              "displayName": "Your Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What are the skills you want to learn?",
+              "displayName": "What are the skills you want to learn?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What period of time do you want to learn these skills?",
+              "displayName": "What period of time do you want to learn these skills?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Why you want to learn it ?",
+              "displayName": "Why you want to learn it ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Processed",
+              "displayName": "Processed",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1664,
+        352
+      ],
+      "id": "b7f5da24-8262-4883-9ed4-150459550909",
+      "name": "Update row in sheet (Fail)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VdQvCOO7iZDo71f9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body['Your Gmail'] }}",
+        "subject": "Your Plan",
+        "message": "={{ $('As a Hobby').item.json.output[0].content[0].text }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Skill Journey"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1664,
+        96
+      ],
+      "id": "e5428486-50bb-44db-99c5-9d6f0e65e571",
+      "name": "Done",
+      "webhookId": "0d6646d1-71fc-4cd5-9c71-802da05c5966",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IP49ONgvAiaVKpdL",
+          "name": "n8n Projects"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1232,
+        352
+      ],
+      "id": "495d8be3-c603-46c7-ab9e-a02f88f609b2",
+      "name": "Error Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1232,
+        96
+      ],
+      "id": "d66d069b-c0fa-4921-a19e-18df6525b7b5",
+      "name": "Success Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body['Your Gmail'] }}",
+        "subject": "Your Plan",
+        "message": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Error Email Message</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            background-color: #f4f4f4;\n            margin: 0;\n            padding: 20px;\n        }\n        .email-container {\n            max-width: 600px;\n            margin: 0 auto;\n            background-color: #ffffff;\n            border: 1px solid #ddd;\n            border-radius: 8px;\n            overflow: hidden;\n        }\n        .email-header {\n            background-color: #ff6b6b;\n            color: white;\n            padding: 20px;\n            text-align: center;\n        }\n        .email-body {\n            padding: 20px;\n            color: #333;\n        }\n        .error-message {\n            font-size: 18px;\n            font-weight: bold;\n            color: #d9534f;\n            text-align: center;\n            margin-bottom: 20px;\n        }\n        .footer {\n            background-color: #f8f9fa;\n            padding: 10px;\n            text-align: center;\n            font-size: 12px;\n            color: #666;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"email-header\">\n            <h1>Error Notification</h1>\n            <p>Subject: Oops! An Error Occurred While Generating Your Map</p>\n        </div>\n        <div class=\"email-body\">\n            <div class=\"error-message\">\n                Oops !!<br>\n                An Error happened Generating your map, Try again.\n            </div>\n            <p>If this issue persists, please contact our support team for assistance.</p>\n        </div>\n        <div class=\"footer\">\n            <p>This is an automated message. Please do not reply.</p>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Skill Journey"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1456,
+        352
+      ],
+      "id": "73aff687-c7d3-42df-8d26-5cdb840ca52d",
+      "name": "Error Message",
+      "webhookId": "0d6646d1-71fc-4cd5-9c71-802da05c5966",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IP49ONgvAiaVKpdL",
+          "name": "n8n Projects"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "For Work",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "As a Hobby",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "For Work": {
+      "main": [
+        [
+          {
+            "node": "Success Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "As a Hobby": {
+      "main": [
+        [
+          {
+            "node": "Success Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Error Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet (Success)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Error Merge": {
+      "main": [
+        [
+          {
+            "node": "Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Message": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet (Fail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Africa/Cairo"
+  },
+  "versionId": "40e7e1b5-0a45-4fec-9bf1-e5832434cc99",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1deade8a2d7f34dfb425b3fe11be4bc75a4ed101db67b7a4d4cf978122d91ad5"
+  },
+  "id": "RlsIGdDgh2oLeAEs",
+  "tags": []
+}
