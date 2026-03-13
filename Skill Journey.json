@@ -1,0 +1,594 @@
+{
+  "name": "Skill Journey",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        0,
+        92
+      ],
+      "id": "adcf14b1-7ca2-41a1-aee9-198a4b740263",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        296,
+        192
+      ],
+      "id": "5a68479a-f056-4117-a732-0df18c7f8023",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "eC9jYCCymh15YduQ",
+          "name": "Skill Journey"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9a59a04a-5aa6-4f86-93ab-5d93770aff97",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -224,
+        92
+      ],
+      "id": "042bd1b6-4163-4d2d-98c6-c7f626cbb6c6",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a detailed learning roadmap for {{ $json['What are the skills you want to learn?'] }} that spans {{ $json['What period of time do you want to learn these skills?'] }}.\n\nThe roadmap should be appropriate for a learner who is {{ $json['How old Are You ?'] }} years old and tailored to their goal of learning these skills for {{ $json['Why you want to learn it ?'] }}.\n\nBreak the roadmap into clear phases (weekly or monthly depending on the timeframe). For each phase include:\n- Key topics to learn\n- Practical exercises or projects\n- Recommended learning resources\n- Expected outcomes or skills gained\n\nIMPORTANT OUTPUT FORMAT:\n\n1. Return the result as **clean HTML only**, starting explicitly with <html>.\n\n2. Include a <head> section with <style> where all headings, texts, backgrounds, highlights, and borders use **actual color hex codes**. Use the following colors:\n\n   - Headings and section titles: #1a3a2e, #2d5a3d, #3d7a52, #6aaa7e\n   - Section backgrounds: #e8f5ec, #fdf7ec, #f7f3ed\n   - Highlights, buttons, important notes: #b87c1e, #d9952a, #f4c96a\n   - Text content: #1c2b4a, #223355, #3b6ea5\n   - Borders, horizontal lines, secondary text: #ddd6ca, #7a7063, #c2b8ab\n\n3. Start the HTML body with a welcome message:\nWelcome {{ $json['Your Name'] }}\n\n4. Present the roadmap in structured sections:\n- Each phase as a <section> with <h2> for the phase title.\n- Use <ul> and <li> for topics, exercises, resources, and outcomes.\n- Apply the colors above **directly in inline style attributes or CSS classes** so the colors appear visually.\n\n5. Make the HTML fully styled, readable, and ready to render on a webpage.\n\n6. Include spacing, borders, or containers to visually separate sections.\n\n7. Return **only the HTML code**, no explanations or extra text.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "37cf6675-2c4f-407a-bfd7-e45fd40e987f",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1248,
+        64
+      ],
+      "id": "3aafbdb5-cd54-4399-8381-ed125be781a0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE",
+          "mode": "list",
+          "cachedResultName": "Skill Journey (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1066219918,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit#gid=1066219918"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        92
+      ],
+      "id": "d054de62-de96-4257-9bea-f6045a2527e1",
+      "name": "Data Loading",
+      "retryOnFail": false,
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "loaxoT1DU9eyL9vE",
+          "name": "Google Sheets Trigger account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "try {\n\nlet htmlString = $input.first().json.output;\n\nif (!htmlString) {\n  throw new Error(\"AI returned empty output\");\n}\n\nif (typeof htmlString !== 'string') {\n  htmlString = String(htmlString);\n}\n\nhtmlString = htmlString.replace(/^\\s*'''html\\s*/i, '');\nhtmlString = htmlString.replace(/\\s*'''\\s*$/g, '');\nhtmlString = htmlString.trim();\n\nreturn [\n  {\n    json: {\n      html: htmlString\n    }\n  }\n];\n\n} catch (error) {\n\nreturn [\n  {\n    json: {\n      error: error.message\n    }\n  }\n];\n\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -32
+      ],
+      "id": "d7006bdf-88ae-4f6f-9986-7f063c45c63b",
+      "name": "Output Correction"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Data Loading').item.json['Your Gmail'] }}",
+        "subject": "SkillJourney Roudmap",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "SkillJourney"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        -32
+      ],
+      "id": "153c8a00-8069-47b2-8b88-dc43f0b6a39c",
+      "name": "Roadmap Sending",
+      "webhookId": "1fee567d-12c7-49d2-8fba-164ecaecfd9d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IP49ONgvAiaVKpdL",
+          "name": "n8n Projects"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE",
+          "mode": "list",
+          "cachedResultName": "Skill Journey (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1066219918,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit#gid=1066219918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Data Loading').item.json.Timestamp }}",
+            "Status": "Error (Email Wasting sent)"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Your Name",
+              "displayName": "Your Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "How old Are You ?",
+              "displayName": "How old Are You ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Gmail",
+              "displayName": "Your Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What are the skills you want to learn?",
+              "displayName": "What are the skills you want to learn?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What period of time do you want to learn these skills?",
+              "displayName": "What period of time do you want to learn these skills?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Why you want to learn it ?",
+              "displayName": "Why you want to learn it ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        64
+      ],
+      "id": "bba10769-c788-4af2-a706-83906594364f",
+      "name": "Error",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VdQvCOO7iZDo71f9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE",
+          "mode": "list",
+          "cachedResultName": "Skill Journey (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1066219918,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UcQTJOxtvESm3-dMT17I395RWoQkkBR1LlkpJPRDifE/edit#gid=1066219918"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('Data Loading').item.json.Timestamp }}",
+            "Status": "Done"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Your Name",
+              "displayName": "Your Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "How old Are You ?",
+              "displayName": "How old Are You ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Your Gmail",
+              "displayName": "Your Gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What are the skills you want to learn?",
+              "displayName": "What are the skills you want to learn?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "What period of time do you want to learn these skills?",
+              "displayName": "What period of time do you want to learn these skills?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Why you want to learn it ?",
+              "displayName": "Why you want to learn it ?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        -128
+      ],
+      "id": "7dbdcae0-b86a-4ccf-b1e0-e0b7037ea9b2",
+      "name": "Done",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VdQvCOO7iZDo71f9",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Output Correction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Loading": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Correction": {
+      "main": [
+        [
+          {
+            "node": "Roadmap Sending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roadmap Sending": {
+      "main": [
+        [
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Done": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Africa/Cairo"
+  },
+  "versionId": "32502744-21ea-4d19-81fd-3f7f3bf362a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1deade8a2d7f34dfb425b3fe11be4bc75a4ed101db67b7a4d4cf978122d91ad5"
+  },
+  "id": "RlsIGdDgh2oLeAEs",
+  "tags": []
+}
