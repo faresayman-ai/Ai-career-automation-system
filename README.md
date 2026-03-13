@@ -1,25 +1,25 @@
-# 🎯 AI Career Path Automation System — Skill Journey
+## 🎯 AI Career Path Automation System — Skill Journey
 
-> An n8n workflow that generates personalized, AI-powered learning roadmaps and delivers them instantly to your inbox — in under 10 seconds.
+An n8n workflow that generates personalized, AI-powered learning roadmaps using Gemini 2.5 Flash Lite and delivers them as professionally styled HTML emails.
 
 ---
 
 ## 📌 Overview
 
-Skill Journey eliminates the guesswork from learning planning. A user submits a form with their target skill, timeframe, and goal (career or hobby), and the system uses GPT-3.5-Turbo to generate a structured, step-by-step roadmap — then emails it in a styled HTML format automatically.
+Skill Journey is an automated pipeline designed to transform user goals into structured educational plans. Unlike static templates, this system polls a Google Sheet for new responses, filters out already processed entries, and uses the Gemini 2.5 Flash Lite model to draft a custom roadmap. A dedicated JavaScript layer ensures the AI's output is sanitized and valid HTML before it is emailed to the user.
 
-**Zero manual effort. Personalized plans at scale.**
+**Scalable, polished, and data-driven.**
 
 ---
 
 ## ✨ Features
 
-- 🎭 **Goal-Aware Prompting** — Differentiates between career-focused and hobby-focused learning paths using conditional logic
-- 🧠 **AI Roadmap Generation** — GPT-3.5-Turbo builds step-by-step plans with specific free courses and YouTube recommendations
-- 📧 **Instant Email Delivery** — Sends the roadmap directly to the user's Gmail in a styled HTML format
-- 📊 **Google Sheets Logging** — Automatically marks each request as `done` or `Error` for tracking
-- ⚡ **Fast** — Processes and delivers results in under 10 seconds
-
+- **🔄 Polling Trigger** — Automatically checks Google Sheets every minute for new "Skill Journey" form responses.
+- **🧠 Advanced AI Reasoning** — Uses gemini-2.5-flash-lite via OpenRouter to generate deep, age-appropriate, and goal-specific roadmaps.
+- **🧹 JS Output Sanitization** — A dedicated Code node strips Markdown backticks (```html) from AI responses to ensure 100% valid HTML delivery.
+- **🎨 Dynamic HTML Styling** — The AI is programmed to inject specific hex-code palettes (#1a3a2e, #b87c1e, etc.) directly into the email body.
+- **➰ Batch Processing** — Uses "Loop Over Items" to handle multiple new sign-ups in a single execution without timeouts.
+- **✅ Status Synchronization** — Updates the Google Sheet "Status" column to Done only after the email has been successfully sent.
 ---
 
 ## 🔧 Tech Stack
@@ -27,14 +27,15 @@ Skill Journey eliminates the guesswork from learning planning. A user submits a 
 | Tool | Role |
 |------|------|
 | [n8n](https://n8n.io) | Workflow automation engine |
-| GPT-3.5-Turbo (OpenAI) | Roadmap generation |
-| Gmail | Roadmap delivery |
-| Google Sheets | Request logging & status tracking |
-| Webhook | Form submission trigger |
+| Gemini 2.5 Flash Lite | Roadmap generation |
+| OpenRouter | LLM API Gateway |
+| Google Sheets | Database & Trigger source |
+| JavaScript | Data cleaning & String manipulation |
 
 ### Required Credentials
-- OpenAI API key
+- OpenRouter API (for Gemini 2.5 access)
 - Google Sheets OAuth2
+- Google Sheets Trigger OAuth2
 - Gmail OAuth2
 
 ---
@@ -42,36 +43,32 @@ Skill Journey eliminates the guesswork from learning planning. A user submits a 
 ## 🗂️ Workflow Architecture
 
 ```
-Webhook (Form Submission)
-  └── Receive: name, email, target skill, timeframe, goal
-        └── If Node — goal type?
-              ├── "Work"  → Career-focused prompt (job-readiness)
-              └── "Hobby" → Hobby-focused prompt (personal enjoyment)
-                    └── GPT-3.5-Turbo generates step-by-step roadmap
-                          ├── [Success] Email roadmap via Gmail (HTML format)
-                          │           + Mark Google Sheet row as "done"
-                          └── [Error]   Send error notification to user
-                                        + Mark Google Sheet row as "Error"
+Google Sheets Trigger (Every Minute)
+  └── Filter (If 'Status' is empty)
+        └── Loop Over Items
+              └── AI Agent (Gemini 2.5 Flash Lite)
+                    └── Code Node (Regex HTML Cleanup)
+                          └── Gmail (Send Styled Roadmap)
+                                └── Update Google Sheet (Set Status to "Done")
 ```
 
 ---
 
 ## 📬 Sample Output
 
-The user receives a colorful HTML email containing:
-- A structured weekly/monthly learning plan
-- Specific free course recommendations
-- Suggested YouTube channels or videos
-- Milestones tailored to their timeframe
-
+The AI generates a sophisticated HTML document with:
+- **Personalized Greeting** : "Welcome [User Name]"
+- **Color-Coded Phases** : Structured <section> tags with specific brand colors.
+- **Deep Content** : Integration of specific topics, practical projects, and resources.
+- **Visual Hierarchy** : Styled borders and backgrounds (#e8f5ec) for readability.
 ---
 
 ## 🚀 How to Use
 
 ### Prerequisites
 - [n8n](https://n8n.io) (self-hosted or cloud)
-- OpenAI API key
-- Google account (Sheets + Gmail)
+- OpenRouter API Key
+- A Google Sheet with columns: Timestamp, Your Name, Your Gmail, What are the skills you want to learn?, What period of time..., Why you want to learn it ?, and Status.
 
 ### Setup
 
@@ -80,15 +77,15 @@ The user receives a colorful HTML email containing:
    - Upload `Skill_Journey.json`
 
 2. **Configure credentials**
-   - Add your **OpenAI API** key
+   - Add your **OpenRouter Chat Model** key
    - Add your **Google Sheets OAuth2** credentials
    - Add your **Gmail OAuth2** credentials
 
-3. **Connect your form**
-   - Point your Google Form or frontend to the webhook URL generated by n8n
+3. **Map the Sheet**
+   - Ensure the Document ID in the Trigger and Update nodes matches your specific Google Sheet ID.
 
 4. **Activate and test**
-   - Submit a test entry and check your inbox
+   - Flip the workflow to Active. It will now check your sheet every 60 seconds.
 
 ---
 
@@ -100,12 +97,4 @@ The user receives a colorful HTML email containing:
 
 ---
 
-## 🔮 Future Improvements
-
-- Web dashboard for user tracking
-- Expanded AI personalization features
-- Analytics for learning progress monitoring
-
----
-
-*Built with n8n + GPT-3.5-Turbo. Processes career planning requests in under 10 seconds.*
+*Built with n8n + GPT-3.5-Turbo. Processes career planning requests in under 15 seconds.*
