@@ -96,5 +96,13 @@ The AI generates a sophisticated HTML document with:
 | `Skill_Journey.json` | n8n workflow export (import this into n8n) |
 
 ---
+## 🔗 Live Demo
+ 
+Try the live deployment here:
+ 
+**[(https://faresayman-ai.github.io/Ai-career-automation-system/)**
+ 
+> Submit a skill goal and receive a personalized roadmap directly in your inbox. Processes requests in under 15 seconds.
+---
 
 *Built with n8n + Gemini-2.5 Flash Lite. Processes career planning requests in under 15 seconds.*
