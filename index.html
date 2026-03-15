@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Journey — Your Personal Learning Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a18;
+    --paper: #f5f0e8;
+    --cream: #ede7d5;
+    --gold: #b87c1e;
+    --gold-light: #f4c96a;
+    --forest: #1a3a2e;
+    --moss: #3d7a52;
+    --sage: #6aaa7e;
+    --mist: #e8f5ec;
+    --slate: #1c2b4a;
+    --border: #ddd6ca;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 10% 20%, rgba(106,170,126,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 90% 80%, rgba(184,124,30,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  header {
+    text-align: center;
+    padding: 64px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--gold-light);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 7vw, 72px);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--forest);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: #7a7063;
+    font-weight: 300;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .form-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 48px;
+    box-shadow: 0 4px 32px rgba(26,58,46,0.06);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--moss);
+    box-shadow: 0 0 0 3px rgba(61,122,82,0.1);
+    background: white;
+  }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231a3a2e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+    grid-column: 1 / -1;
+  }
+
+  .btn {
+    grid-column: 1 / -1;
+    background: var(--forest);
+    color: var(--gold-light);
+    border: none;
+    padding: 16px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn:hover { background: #2d5a3d; }
+  .btn:active { transform: scale(0.99); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .btn-inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(244,201,106,0.3);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #result-section {
+    display: none;
+    margin-top: 48px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--forest);
+  }
+
+  .result-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--forest);
+  }
+
+  .btn-actions { display: flex; gap: 10px; }
+
+  .btn-sm {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-sm:hover { border-color: var(--moss); color: var(--moss); }
+  .btn-sm.gold-btn { background: var(--gold); border-color: var(--gold); color: white; }
+  .btn-sm.gold-btn:hover { background: #a06a10; border-color: #a06a10; color: white; }
+
+  #roadmap-output {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #roadmap-iframe {
+    width: 100%;
+    min-height: 600px;
+    border: none;
+    display: block;
+  }
+
+  .error-box {
+    background: #fff5f5;
+    border: 1px solid #ffcccc;
+    color: #cc0000;
+    padding: 16px 20px;
+    border-radius: 3px;
+    font-size: 13px;
+    margin-top: 16px;
+    display: none;
+  }
+
+  .status-bar {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: var(--mist);
+    border: 1px solid #c3e6cc;
+    border-radius: 3px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--forest);
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--sage);
+    border-radius: 50%;
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  @media (max-width: 600px) {
+    .form-card { padding: 28px 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full, .btn, .divider { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge">AI-Powered Learning</div>
+    <h1>Skill<br><em>Journey</em></h1>
+    <p class="subtitle">Tell us what you want to master. Get a personalized roadmap crafted just for you — instantly.</p>
+  </header>
+
+  <div class="form-card">
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" placeholder="e.g. Ahmed" />
+      </div>
+
+      <div class="field">
+        <label for="age">Your Age</label>
+        <input type="number" id="age" placeholder="e.g. 24" min="5" max="99" />
+      </div>
+
+      <div class="field full">
+        <label for="skills">Skills You Want to Learn</label>
+        <textarea id="skills" placeholder="e.g. Python programming, data analysis, machine learning…"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="timeframe">Learning Timeframe</label>
+        <select id="timeframe">
+          <option value="">Select period…</option>
+          <option>1 week</option>
+          <option>2 weeks</option>
+          <option>1 month</option>
+          <option>3 months</option>
+          <option>6 months</option>
+          <option>1 year</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="reason">Why Learn It?</label>
+        <input type="text" id="reason" placeholder="e.g. career change, freelancing…" />
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="btn" id="generate-btn" onclick="generateRoadmap()">
+        <span class="btn-inner">
+          <span class="spinner" id="spinner"></span>
+          <span id="btn-text">Generate My Roadmap</span>
+        </span>
+      </button>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
+    <div class="status-bar" id="status-bar">
+      <div class="status-dot"></div>
+      <span>Building your personalized roadmap…</span>
+    </div>
+  </div>
+
+  <div id="result-section">
+    <div class="result-header">
+      <h2>Your Learning Roadmap</h2>
+      <div class="btn-actions">
+        <button class="btn-sm" onclick="printRoadmap()">Print</button>
+        <button class="btn-sm gold-btn" onclick="downloadRoadmap()">Download HTML</button>
+      </div>
+    </div>
+    <div id="roadmap-output">
+      <iframe id="roadmap-iframe" title="Your Skill Journey Roadmap"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── REPLACE THIS with your Cloudflare Worker URL after deploying worker.js ───
+  const WORKER_URL = 'https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev';
+  // ──────────────────────────────────────────────────────────────────────────────
+
+  let currentHtml = '';
+
+  async function generateRoadmap() {
+    const name      = document.getElementById('name').value.trim();
+    const age       = document.getElementById('age').value.trim();
+    const skills    = document.getElementById('skills').value.trim();
+    const timeframe = document.getElementById('timeframe').value;
+    const reason    = document.getElementById('reason').value.trim();
+
+    if (!name || !age || !skills || !timeframe || !reason) {
+      showError('Please fill in all fields before generating your roadmap.');
+      return;
+    }
+
+    setLoading(true);
+    hideError();
+
+    const prompt = `Create a detailed learning roadmap for ${skills} that spans ${timeframe}.
+
+The roadmap should be appropriate for a learner who is ${age} years old and tailored to their goal of learning these skills for ${reason}.
+
+Break the roadmap into clear phases (weekly or monthly depending on the timeframe). For each phase include:
+- Key topics to learn
+- Practical exercises or projects
+- Recommended learning resources
+- Expected outcomes or skills gained
+
+IMPORTANT OUTPUT FORMAT:
+
+1. Return the result as clean HTML only, starting explicitly with <html>.
+
+2. Include a <head> section with <style> where all headings, texts, backgrounds, highlights, and borders use actual color hex codes:
+   - Headings and section titles: #1a3a2e, #2d5a3d, #3d7a52, #6aaa7e
+   - Section backgrounds: #e8f5ec, #fdf7ec, #f7f3ed
+   - Highlights / important notes: #b87c1e, #d9952a, #f4c96a
+   - Text content: #1c2b4a, #223355, #3b6ea5
+   - Borders / secondary text: #ddd6ca, #7a7063, #c2b8ab
+   - Import and use Google Fonts: Playfair Display + DM Sans
+
+3. Start the body with a warm welcome message for ${name}.
+
+4. Each phase as a <section> with <h2> title. Use <ul>/<li> for topics, exercises, resources, outcomes.
+
+5. Make it fully styled, beautiful, and ready to render in a browser.
+
+6. Return ONLY the HTML. No explanations, no markdown fences.`;
+
+    try {
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      let html = data.content?.[0]?.text || '';
+      html = html.replace(/^```html\s*/i, '').replace(/```\s*$/g, '').trim();
+
+      if (!html) throw new Error('No content returned. Please try again.');
+
+      currentHtml = html;
+      renderRoadmap(html);
+
+    } catch (err) {
+      showError('Something went wrong: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderRoadmap(html) {
+    const section = document.getElementById('result-section');
+    const iframe  = document.getElementById('roadmap-iframe');
+
+    section.style.display = 'block';
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open(); doc.write(html); doc.close();
+
+    setTimeout(() => {
+      try {
+        iframe.style.height = Math.max(600, doc.documentElement.scrollHeight) + 'px';
+      } catch (e) {}
+    }, 600);
+  }
+
+  function printRoadmap() {
+    document.getElementById('roadmap-iframe').contentWindow.print();
+  }
+
+  function downloadRoadmap() {
+    if (!currentHtml) return;
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([currentHtml], { type: 'text/html' })),
+      download: 'skill-journey-roadmap.html'
+    });
+    a.click();
+  }
+
+  function setLoading(on) {
+    document.getElementById('generate-btn').disabled = on;
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+    document.getElementById('btn-text').textContent = on ? 'Crafting your roadmap…' : 'Generate My Roadmap';
+    document.getElementById('status-bar').style.display = on ? 'flex' : 'none';
+  }
+
+  function showError(msg) {
+    const b = document.getElementById('error-box');
+    b.textContent = msg; b.style.display = 'block';
+  }
+
+  function hideError() {
+    document.getElementById('error-box').style.display = 'none';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') generateRoadmap();
+  });
+</script>
+
+</body>
+</html>
