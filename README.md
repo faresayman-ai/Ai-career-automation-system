@@ -97,4 +97,4 @@ The AI generates a sophisticated HTML document with:
 
 ---
 
-*Built with n8n + GPT-3.5-Turbo. Processes career planning requests in under 15 seconds.*
+*Built with n8n + Gemini-2.5 Flash Lite. Processes career planning requests in under 15 seconds.*
